@@ -19,7 +19,7 @@ class Body{
   }
   
   void update(){
-    a = (appliedForce -  kv * v - ke * x)/m; 
+    a = (appliedForce - kv * v - ke * x)/m; 
     v += a;
     x += v;
   }
@@ -45,12 +45,24 @@ class Body{
     return x; 
   }
   
+  float getV(){
+    return v; 
+  }
+  
+  float getA(){
+    return a; 
+  }
+  
   void setX(float value){
     x = value;
   }
   
  void setY(float value){
     y = value;
+  }
+  
+  float getRadius(){
+    return radius;
   }
   
   void reset(){
