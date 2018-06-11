@@ -9,8 +9,8 @@ class Body{
     c = 0;
     m = argMass;
     radius = m;
-    kv = 25;
-    ke = 30;
+    kv = 0;
+    ke = 0;
     a = 0;
     x = 0;
     y = -300;
@@ -44,7 +44,17 @@ class Body{
     return x; 
   }
   
+  void setX(float value){
+    x = value;
+  }
+  
  void setY(float value){
     y = value;
+  }
+  
+  void reset(){
+    x = 0;
+    v = 0;
+    a = 0;
   }
 }
