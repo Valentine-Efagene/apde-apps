@@ -6,6 +6,7 @@ class Body{
   float appliedForce, viscousForce, massForce, elsticForce;
   
   Body(float argMass){
+    appliedForce = 0;
     c = 0;
     m = argMass;
     radius = m;
