@@ -11,6 +11,7 @@ float chartX, chartY,
 void setup() {
   fullScreen();
   textSize(32);
+  stroke(#0092FF);
   chartX = 50;
   chartY = 50;
   forceSliderX = 100;
@@ -31,19 +32,19 @@ void setup() {
   slider = cp5.addSlider("force");
   slider.setPosition(forceSliderX, forceSliderY)
     .setSize(500, 30)
-    .setRange(0, 1000)
+    .setRange(0, 2000)
     .setValue(0);
     
   keSlider = cp5.addSlider("elasticity");
   keSlider.setPosition(keSliderX, keSliderY)
     .setSize(500, 30)
-    .setRange(0, 100)
+    .setRange(0, 50)
     .setValue(0);
     
   kvSlider = cp5.addSlider("coefficient_of_friction");
   kvSlider.setPosition(kvSliderX, kvSliderY)
     .setSize(500, 30)
-    .setRange(0, 100)
+    .setRange(0, 50)
     .setValue(0);
   
    myChart = cp5.addChart("displacement")
@@ -80,8 +81,8 @@ void draw(){
   translate(width/2, height/2);
   body.update();
   body.display();
-  stroke(255);
-  line(body.getX(), body.getY(), body.getY(), -width/2);
+  line(0, body.getY() + body.getRadius() + 50, 0, body.getY() - body.getRadius() - 50);
+  line(-width/2, body.getY(), width/2, body.getY());
   text("x = " + body.getX(), -150, 50);
   text("v = " + body.getV(), -150, 100);
   text("a = " + body.getA(), -150, 150);

@@ -61,6 +61,10 @@ class Body{
     y = value;
   }
   
+  float getY(){
+    return y; 
+  }
+  
   float getRadius(){
     return radius;
   }
