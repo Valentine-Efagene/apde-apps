@@ -13,9 +13,9 @@ class Ball {
     cs.m_radius = box2d.scalarPixelsToWorld(r);
     FixtureDef fd = new FixtureDef();
     fd.shape = cs;
-    fd.density = 10;
+    fd.density = 1780;
     fd.friction = 0.01;
-    fd.restitution = 0.3;
+    fd.restitution = 0.5;//bounciness
     BodyDef bd = new BodyDef();
     bd.type = BodyType.DYNAMIC;
     bd.position.set(box2d.coordPixelsToWorld(x,y));
@@ -23,7 +23,7 @@ class Ball {
     body = box2d.createBody(bd);
     body.createFixture(fd);
     body.setLinearVelocity(new Vec2(0, random(20f, 50f)));
-    body.setAngularVelocity(random(-10,10));
+    body.setAngularVelocity(random(10,10));
   }
 
   void display() {

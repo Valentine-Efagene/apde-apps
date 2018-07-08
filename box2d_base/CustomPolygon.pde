@@ -18,7 +18,7 @@ class CustomPolygon {
 
     FixtureDef fd = new FixtureDef();
     fd.shape = ps;
-    fd.density = 10;
+    fd.density = 1780;
     fd.friction = 0.01;
     fd.restitution = 0.3;
     BodyDef bd = new BodyDef();

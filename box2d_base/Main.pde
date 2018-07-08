@@ -14,7 +14,7 @@ import shiffman.box2d.*;
 import org.jbox2d.dynamics.joints.*;
 
 Ball b; 
-Ground g;
+Boundary g, c, l, r;
 CustomPolygon cp; 
 Vec2[] vertices; 
 Box2DProcessing box2d;
@@ -23,7 +23,7 @@ void setup(){
   fullScreen();
   box2d = new Box2DProcessing(this);
   box2d.createWorld();
-  box2d.setGravity(0, -10);
+  box2d.setGravity(0, -40);
   
   vertices = new Vec2[4];
   vertices[0] = new Vec2(-15, 25);
@@ -31,8 +31,11 @@ void setup(){
   vertices[2] = new Vec2(20, -15); 
   vertices[3] = new Vec2(-10, -10); 
   
-  b = new Ball(width/2, height/2, 100);
-  g = new Ground(width/2, height/2 + 500, width, 20);
+  b = new Ball(width/2, height/2, 20);
+  g = new Boundary(width/2, height - 20, width, 20);
+  l = new Boundary(20, height/2, 20, height);
+  r = new Boundary(width - 20, height/2, 20, height);
+  c = new Boundary(width/2, 20, width, 20);
   cp = new CustomPolygon(vertices);
 }
 
@@ -41,5 +44,8 @@ void draw(){
   box2d.step();
   g.display();
   b.display();
+  r.display();
+  l.display();
+  c.display();
   cp.display();
 }

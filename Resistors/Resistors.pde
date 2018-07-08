@@ -12,6 +12,7 @@ color[] colors = new color[8];
 Button[] buttons = new Button[4];
 
 void setup(){
+  fullScreen();
   fill(0);
   smooth();
   base = 0;
