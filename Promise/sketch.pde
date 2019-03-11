@@ -6,12 +6,17 @@ import android.view.View.OnKeyListener;
 import android.view.KeyEvent;
 import android.view.View; 
 
-Table table;
+Table[][] tables;
+Table table; 
+int clicks = 0;
+int timeSpent = 0;
 public String[] user = {""};
+int wNum = 0;
+int dNum = 0;
 Additional ad;
 boolean writePermitted = false; 
 float[] D = {100, 200, 300};
-float[] W = {50, 75, 100};
+float[] W = {30, 40, 50};
 float d,  w;
 int targetID = 0;
 float aV = 2 * PI / 13;
@@ -24,20 +29,31 @@ int startTime = 0;
 PFont font;
 PFont timeFont;
 int config = 1;
+boolean justGotUser = true;
+
+void mousePressed(){
+  clicks++;
+}
 
 void setup(){
   fullScreen();
+  tables = new Table[3][3];
   ad = new Additional(user);
   runOnUiThread(ad);
   requestPermission("android.permission.READ_EXTERNAL_STORAGE", "handlePermission");
-  table = new Table(); 
-  table.addColumn("id"); 
-  table.addColumn("species"); 
-  table.addColumn("name"); 
-  TableRow newRow = table.addRow(); 
-  newRow.setInt("id", table.lastRowIndex()); 
-  newRow.setString("species", "Panthera leo"); 
-  newRow.setString("name", "Lion"); 
+  
+  for(int i = 0; i < 3; i++){
+    for(int j = 0; j < 3; j++){
+      tables[i][j] = new Table();
+      tables[i][j].addColumn("ID"); 
+      tables[i][j].addColumn("User"); 
+      tables[i][j].addColumn("Width"); 
+      tables[i][j].addColumn("Distance"); 
+      tables[i][j].addColumn("Clicks");
+      tables[i][j].addColumn("Time"); 
+    }
+  }
+  
   d = D[0];
   w = W[0];
   font = createFont("SansSerif", 70);
@@ -47,6 +63,8 @@ void setup(){
   for(int i = 0; i < 13; i++){
     c[i] = new Circle( 0.0,  d, w );
   }
+  
+  clicks = 0;
 }
 
 void handlePermission(boolean granted) { 
@@ -75,6 +93,8 @@ void draw(){
     fill(0);
     text(config, 200, 200);
   }
+  
+  
   
   pushMatrix();
   translate(width/2, height/2);
@@ -107,18 +127,22 @@ void draw(){
   popMatrix();
   
   if(countUsed() == 13){
-    //fill(0);
-    //textFont(font);
-    //text("NEXT LEVEL! ", 200, 400);
+    timeSpent = second() - startTime;
+    table = tables[wNum][dNum];
+    TableRow newRow = table.addRow(); 
+    newRow.setInt("ID", table.lastRowIndex()); 
+    newRow.setString("User", user[0]); 
+    newRow.setInt("Clicks", clicks); 
+    newRow.setInt("Time", timeSpent); 
+    newRow.setInt("Width", (int)W[wNum]); 
+    newRow.setInt("Distance", (int)D[dNum]); 
+    saveTable(table, "/storage/emulated/0/Fitters-Law/" + "user_" + user[0] + "_width_" + W[wNum] + "_height_" + D[dNum] + ".csv");
+    
     config++;
     
     if(config < 10){
-      if(writePermitted){
-        saveTable(table, "/storage/emulated/0/Sketchbook/file/" + user[0] + ".csv"); 
-      }
       reset();
     }
-    
   }
 }
 
@@ -135,9 +159,15 @@ int countUsed(){
 }
 
 void reset(){
+  clicks = 0;
+  timeSpent = 0;
+  startTime = second();
+  
   switch(config){
     case 2:
       background(200);
+      wNum = 0;
+      dNum = 1;
       w = W[0];
       d = D[1];
       for(int i = 0; i < 13; i++){
@@ -147,6 +177,8 @@ void reset(){
       
       case 3:
       background(200);
+      wNum = 0;
+      dNum = 2;
       w = W[0];
       d = D[2];
       for(int i = 0; i < 13; i++){
@@ -156,6 +188,8 @@ void reset(){
       
       case 4:
       background(200);
+      wNum = 1;
+      dNum = 0;
       w = W[1];
       d = D[0];
       for(int i = 0; i < 13; i++){
@@ -165,6 +199,8 @@ void reset(){
       
       case 5:
       background(200);
+      wNum = 1;
+      dNum = 1;
       w = W[1];
       d = D[1];
       for(int i = 0; i < 13; i++){
@@ -174,6 +210,8 @@ void reset(){
       
       case 6:
       background(200);
+      wNum = 1;
+      dNum = 2;
       w = W[1];
       d = D[2];
       for(int i = 0; i < 13; i++){
@@ -183,6 +221,8 @@ void reset(){
       
       case 7:
       background(200);
+      wNum = 2;
+      dNum = 0;
       w = W[2];
       d = D[0];
       for(int i = 0; i < 13; i++){
@@ -192,6 +232,8 @@ void reset(){
       
       case 8:
       background(200);
+      wNum = 2;
+      dNum = 1;
       w = W[2];
       d = D[1];
       for(int i = 0; i < 13; i++){
@@ -201,6 +243,8 @@ void reset(){
       
       case 9:
       background(200);
+      wNum = 2;
+      dNum = 2;
       w = W[2];
       d = D[2];
       for(int i = 0; i < 13; i++){
@@ -288,7 +332,7 @@ class Additional implements Runnable, OnKeyListener{
       et.setBackgroundColor(color(255));
       
       FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(500, 100);
-      lp.topMargin = 10;
+      lp.topMargin = 70;
       lp.leftMargin = 10;
       View surfaceView = getSurface().getSurfaceView();
       ViewGroup parent=(ViewGroup)surfaceView.getParent();
