@@ -5,6 +5,7 @@ import android.support.v4.app.*;
 import android.view.View.OnKeyListener;
 import android.view.KeyEvent;
 import android.view.View; 
+import android.text.InputType;
 
 Table[][] tables;
 Table table; 
@@ -80,8 +81,6 @@ void draw(){
     return;
   }
   
-  //textFont(font);
-  //text((second() - startTime) % 59, 200, 200);
   textFont(font);
   
   if(config == 10){
@@ -119,9 +118,7 @@ void draw(){
     target = false; 
   }
   
-  line(0, 0, 0, d);
   c[i].draw(target);
-  
   i++;
   
   popMatrix();
@@ -330,6 +327,8 @@ class Additional implements Runnable, OnKeyListener{
       FrameLayout fl = new FrameLayout(getContext());
       et = new EditText(getContext());
       et.setBackgroundColor(color(255));
+      et.setHint( "User Number" );
+      et.setInputType(InputType.TYPE_CLASS_NUMBER);
       
       FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(500, 100);
       lp.topMargin = 70;
