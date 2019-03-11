@@ -1,3 +1,15 @@
+import android.view.ViewGroup;
+import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.support.v4.app.*;
+import android.view.View.OnKeyListener;
+import android.view.KeyEvent;
+import android.view.View; 
+
+Table table;
+public String[] user = {""};
+Additional ad;
+boolean writePermitted = false; 
 float[] D = {100, 200, 300};
 float[] W = {50, 75, 100};
 float d,  w;
@@ -15,6 +27,17 @@ int config = 1;
 
 void setup(){
   fullScreen();
+  ad = new Additional(user);
+  runOnUiThread(ad);
+  requestPermission("android.permission.READ_EXTERNAL_STORAGE", "handlePermission");
+  table = new Table(); 
+  table.addColumn("id"); 
+  table.addColumn("species"); 
+  table.addColumn("name"); 
+  TableRow newRow = table.addRow(); 
+  newRow.setInt("id", table.lastRowIndex()); 
+  newRow.setString("species", "Panthera leo"); 
+  newRow.setString("name", "Lion"); 
   d = D[0];
   w = W[0];
   font = createFont("SansSerif", 70);
@@ -26,7 +49,19 @@ void setup(){
   }
 }
 
+void handlePermission(boolean granted) { 
+  if (granted) {
+      writePermitted = true;
+  }else{
+    println("File not created!");
+  }
+}
+
 void draw(){
+  if(user[0] == ""){
+    return;
+  }
+  
   //textFont(font);
   //text((second() - startTime) % 59, 200, 200);
   textFont(font);
@@ -78,6 +113,9 @@ void draw(){
     config++;
     
     if(config < 10){
+      if(writePermitted){
+        saveTable(table, "/storage/emulated/0/Sketchbook/file/" + user[0] + ".csv"); 
+      }
       reset();
     }
     
@@ -224,4 +262,40 @@ class Circle{
     return used;
   }
  
+}
+
+class Additional implements Runnable, OnKeyListener{
+  String[] s;
+  EditText et;
+  
+  Additional(String[] s){
+    this.s = s;
+  }
+  
+  public boolean onKey(View v, int keyCode, KeyEvent event) { 
+     if ((event.getAction() == KeyEvent.ACTION_DOWN) && (keyCode == KeyEvent.KEYCODE_ENTER)) { 
+        s[0] = et.getText().toString();
+        et.setVisibility(View.INVISIBLE);
+        return true;
+     }
+          
+     return false; 
+  } 
+  
+  public void run() { 
+      FrameLayout fl = new FrameLayout(getContext());
+      et = new EditText(getContext());
+      et.setBackgroundColor(color(255));
+      
+      FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(500, 100);
+      lp.topMargin = 10;
+      lp.leftMargin = 10;
+      View surfaceView = getSurface().getSurfaceView();
+      ViewGroup parent=(ViewGroup)surfaceView.getParent();
+      parent.removeView(surfaceView);
+      parent.addView(fl);
+      fl.addView(surfaceView);
+      fl.addView(et,lp);
+      et.setOnKeyListener(this);
+    }
 }
