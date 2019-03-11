@@ -8,6 +8,8 @@ import android.view.View;
 import android.text.InputType;
 
 Table[][] tables;
+int mX = 0, mY = 0;
+int targetsRemaining = 13;
 Table table; 
 int clicks = 0;
 int timeSpent = 0;
@@ -18,22 +20,37 @@ Additional ad;
 boolean writePermitted = false; 
 float[] D = {100, 200, 300};
 float[] W = {30, 40, 50};
+final int N = 13;
 float d,  w;
 int targetID = 0;
-float aV = 2 * PI / 13;
+float aV = 2 * PI / N;
 float angle = 0;
 int i = 0;
 float radians = 0;
 boolean target = false;
-Circle[] c = new Circle[13];
+Circle[] c = new Circle[N];
 int startTime = 0;
 PFont font;
 PFont timeFont;
 int config = 1;
-boolean justGotUser = true;
 
 void mousePressed(){
   clicks++;
+  updateTable(table);
+}
+
+void updateTable(Table t){
+  t = tables[wNum][dNum];
+  TableRow newRow = t.addRow(); 
+  newRow.setInt("ID", t.lastRowIndex()); 
+  newRow.setString("User", user[0]); 
+  newRow.setInt("MouseX", mouseX); 
+  newRow.setInt("MouseY", mouseY); 
+  newRow.setInt("Clicks", clicks); 
+  newRow.setInt("Time", second() - startTime); 
+  newRow.setInt("Width", (int)W[wNum]); 
+  newRow.setInt("Distance", (int)D[dNum]); 
+  newRow.setInt("Targets Remaining", N - countUsed()); 
 }
 
 void setup(){
@@ -52,6 +69,9 @@ void setup(){
       tables[i][j].addColumn("Distance"); 
       tables[i][j].addColumn("Clicks");
       tables[i][j].addColumn("Time"); 
+      tables[i][j].addColumn("MouseX"); 
+      tables[i][j].addColumn("MouseY"); 
+      tables[i][j].addColumn("Targets Remaining"); 
     }
   }
   
@@ -60,17 +80,17 @@ void setup(){
   font = createFont("SansSerif", 70);
   timeFont = createFont("SansSerif", 40);
   startTime = second();
+  table = tables[wNum][dNum];
   
-  for(int i = 0; i < 13; i++){
+  for(int i = 0; i < N; i++){
     c[i] = new Circle( 0.0,  d, w );
   }
   
-  clicks = 0;
 }
 
 void handlePermission(boolean granted) { 
   if (granted) {
-      writePermitted = true;
+    writePermitted = true;
   }else{
     println("File not created!");
   }
@@ -98,17 +118,18 @@ void draw(){
   pushMatrix();
   translate(width/2, height/2);
   
-  if(i >= 13){
+  if(i >= N){
     i = 0;
   }
   
   rotate(aV * i);
   
   if(c[i].isClicked()){
-    targetID = (i + 7) % 13;
+    targetsRemaining--;
+    targetID = (i + 7) % N;
     
     while(c[targetID].isUsed()){
-      targetID = (targetID + 1) % 13;
+      targetID = (targetID + 1) % N;
     }
   }
   
@@ -123,17 +144,9 @@ void draw(){
   
   popMatrix();
   
-  if(countUsed() == 13){
-    timeSpent = second() - startTime;
-    table = tables[wNum][dNum];
-    TableRow newRow = table.addRow(); 
-    newRow.setInt("ID", table.lastRowIndex()); 
-    newRow.setString("User", user[0]); 
-    newRow.setInt("Clicks", clicks); 
-    newRow.setInt("Time", timeSpent); 
-    newRow.setInt("Width", (int)W[wNum]); 
-    newRow.setInt("Distance", (int)D[dNum]); 
-    saveTable(table, "/storage/emulated/0/Fitters-Law/" + "user_" + user[0] + "_width_" + W[wNum] + "_height_" + D[dNum] + ".csv");
+  if(countUsed() == N){
+    updateTable(table);
+    saveTable(table, "/storage/emulated/0/Fitters Law/" + "user_" + user[0] + "_width_" + W[wNum] + "_height_" + D[dNum] + ".csv");
     
     config++;
     
@@ -157,17 +170,19 @@ int countUsed(){
 
 void reset(){
   clicks = 0;
-  timeSpent = 0;
   startTime = second();
+  targetsRemaining = 13;
   
   switch(config){
     case 2:
       background(200);
       wNum = 0;
       dNum = 1;
-      w = W[0];
-      d = D[1];
-      for(int i = 0; i < 13; i++){
+      w = W[wNum];
+      d = D[dNum];
+      table = tables[wNum][dNum];
+      
+      for(int i = 0; i < N; i++){
         c[i] = new Circle( 0.0,  d, w );
       }
       break;
@@ -176,9 +191,11 @@ void reset(){
       background(200);
       wNum = 0;
       dNum = 2;
-      w = W[0];
-      d = D[2];
-      for(int i = 0; i < 13; i++){
+      w = W[wNum];
+      d = D[dNum];
+      table = tables[wNum][dNum];
+      
+      for(int i = 0; i < N; i++){
         c[i] = new Circle( 0.0,  d, w );
       }
       break;
@@ -187,9 +204,11 @@ void reset(){
       background(200);
       wNum = 1;
       dNum = 0;
-      w = W[1];
-      d = D[0];
-      for(int i = 0; i < 13; i++){
+      w = W[wNum];
+      d = D[dNum];
+      table = tables[wNum][dNum];
+      
+      for(int i = 0; i < N; i++){
         c[i] = new Circle( 0.0,  d, w );
       }
       break;
@@ -198,9 +217,11 @@ void reset(){
       background(200);
       wNum = 1;
       dNum = 1;
-      w = W[1];
-      d = D[1];
-      for(int i = 0; i < 13; i++){
+      w = W[wNum];
+      d = D[dNum];
+      table = tables[wNum][dNum];
+      
+      for(int i = 0; i < N; i++){
         c[i] = new Circle( 0.0,  d, w );
       }
       break;
@@ -209,9 +230,11 @@ void reset(){
       background(200);
       wNum = 1;
       dNum = 2;
-      w = W[1];
-      d = D[2];
-      for(int i = 0; i < 13; i++){
+      w = W[wNum];
+      d = D[dNum];
+      table = tables[wNum][dNum];
+      
+      for(int i = 0; i < N; i++){
         c[i] = new Circle( 0.0,  d, w );
       }
       break;
@@ -220,9 +243,11 @@ void reset(){
       background(200);
       wNum = 2;
       dNum = 0;
-      w = W[2];
-      d = D[0];
-      for(int i = 0; i < 13; i++){
+      w = W[wNum];
+      d = D[dNum];
+      table = tables[wNum][dNum];
+      
+      for(int i = 0; i < N; i++){
         c[i] = new Circle( 0.0,  d, w );
       }
       break;
@@ -231,9 +256,11 @@ void reset(){
       background(200);
       wNum = 2;
       dNum = 1;
-      w = W[2];
-      d = D[1];
-      for(int i = 0; i < 13; i++){
+      w = W[wNum];
+      d = D[dNum];
+      table = tables[wNum][dNum];
+      
+      for(int i = 0; i < N; i++){
         c[i] = new Circle( 0.0,  d, w );
       }
       break;
@@ -242,12 +269,15 @@ void reset(){
       background(200);
       wNum = 2;
       dNum = 2;
-      w = W[2];
-      d = D[2];
-      for(int i = 0; i < 13; i++){
+      w = W[wNum];
+      d = D[dNum];
+      table = tables[wNum][dNum];
+      
+      for(int i = 0; i < N; i++){
         c[i] = new Circle( 0.0,  d, w );
       }
       break;
+      
     default:
       break; 
   }
