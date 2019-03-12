@@ -146,7 +146,7 @@ void draw(){
   
   if(countUsed() == N){
     updateTable(table);
-    saveTable(table, "/storage/emulated/0/Fitters Law/" + "user_" + user[0] + "_width_" + W[wNum] + "_height_" + D[dNum] + ".csv");
+    saveTable(table, "/storage/emulated/0/Fitts Law/" + "user_" + user[0] + "_width_" + W[wNum] + "_height_" + D[dNum] + ".csv", "csv");
     
     config++;
     
